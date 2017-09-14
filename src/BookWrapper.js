@@ -19,10 +19,10 @@ class BookWrapper extends Component {
   }
 
   render() {
-    const {currentlyReading, wantToRead, read} = this.props;
-    const CurrentlyReading = currentlyReading.map(this.renderBook);
-    const WantToRead = wantToRead.map(this.renderBook);
-    const Read = read.map(this.renderBook);
+    const books = this.props.myBooks;
+    const CurrentlyReading = books.filter((book => book.shelf === "currentlyReading")).map(this.renderBook)
+    const WantToRead = books.filter((book => book.shelf === "wantToRead")).map(this.renderBook)
+    const Read = books.filter((book => book.shelf === "read")).map(this.renderBook)
     
     return(
       <div className="list-books">
