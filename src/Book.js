@@ -1,16 +1,24 @@
 import React, { Component } from 'react'
 
 class Book extends Component {
+  handleChange = (e) => {
+    const value = e.target.value;
+    if(this.props.updateShelf) {
+      this.props.updateShelf(this.props.id,value);
+    }
+  }
+
+
   render() {
-    const {cover, title, authors} = this.props;
+    const {cover, title, authors, shelf} = this.props;
 
     return(
       <li>
         <div className="book">
           <div className="book-top">
-            <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${cover})` }}></div>
+            <div className="book-cover" style={{backgroundImage: `url(${cover})` }}></div>
             <div className="book-shelf-changer">
-              <select>
+              <select value={shelf} onChange={this.handleChange}>
                 <option value="none" disabled>Move to...</option>
                 <option value="currentlyReading">Currently Reading</option>
                 <option value="wantToRead">Want to Read</option>

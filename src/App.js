@@ -6,37 +6,32 @@ import BookWrapper from './BookWrapper'
 import './App.css'
 
 class BooksApp extends React.Component {
-  /**
-   * TODO: Create controlled select box on Book component
-   */
   
   state = {
-    currentlyReading: [],
-    wantToRead: [],
-    read: [],
+    books: [],
   };
 
+  updateShelf = (book,shelf) => {
+    BooksAPI.get(book).then((bookObj) => {
+      bookObj.shelf = shelf;
+      const books = this.state.books.filter(a => a.id !== book).concat(bookObj);
+
+      BooksAPI.update(bookObj,shelf).then((bookStatus) => {
+        this.setState({books})
+      })
+    })
+  }
 
   componentDidMount() {
     BooksAPI.getAll().then((books) => {
-      let currentlyReading = [];
-      let wantToRead = [];
-      let read = [];
-
       books.map((book) => {
-        if(book.shelf === "currentlyReading") {
-          currentlyReading.push(book);
+        if(book.authors.length > 1) {
+          book.authors = book.authors.join(", ");
         }
-        if(book.shelf === "wantToRead") {
-          wantToRead.push(book);
-        }
-        if(book.shelf === "read") {
-          read.push(book);
-        }
-        return book;
+        return book.authors;
       })
-
-      this.setState({currentlyReading, wantToRead, read});
+      
+      this.setState({books});
     });
   }
 
@@ -45,14 +40,16 @@ class BooksApp extends React.Component {
       <div className="app">
         <Route exact path="/" render={() => (
           <BookWrapper 
-            currentlyReading={this.state.currentlyReading}
-            wantToRead={this.state.wantToRead}
-            read={this.state.read}
+            myBooks={this.state.books}
+            updateShelf={this.updateShelf}
           />
         )}/>
 
         <Route exact path="/search" render={() => (
-          <AddToBookList/>
+          <AddToBookList
+            myBooks={this.state.books}
+            updateShelf={this.updateShelf}
+          />
         )}/>
       </div>
     )
