@@ -11,6 +11,7 @@ class BooksApp extends React.Component {
    */
   
   state = {
+    myBooks: [],
     currentlyReading: [],
     wantToRead: [],
     read: [],
@@ -19,12 +20,24 @@ class BooksApp extends React.Component {
   updateShelf = (book,shelf) => {
     BooksAPI.get(book).then((bookObj) => {
       bookObj.shelf = shelf;
+      const newMyBooks = this.state.myBooks.map((c) => {
+        if(c.id === bookObj.id) {
+          c.shelf = shelf;
+        }
+        return c;
+      })
+
+      
+
 
       BooksAPI.update(bookObj,shelf).then((bookStatus) => {
         this.updateState(shelf, bookObj, "currentlyReading");
         this.updateState(shelf, bookObj, "wantToRead");
         this.updateState(shelf, bookObj, "read");
       })
+
+
+      this.setState({myBooks: newMyBooks});
     })
   }
 
@@ -43,6 +56,8 @@ class BooksApp extends React.Component {
 
   componentDidMount() {
     BooksAPI.getAll().then((books) => {
+
+      let myBooks = books;
       let currentlyReading = [];
       let wantToRead = [];
       let read = [];
@@ -60,11 +75,12 @@ class BooksApp extends React.Component {
         return book;
       })
 
-      this.setState({currentlyReading, wantToRead, read});
+      this.setState({currentlyReading, wantToRead, read, myBooks});
     });
   }
 
   render() {
+
     return (
       <div className="app">
         <Route exact path="/" render={() => (
@@ -79,6 +95,7 @@ class BooksApp extends React.Component {
         <Route exact path="/search" render={() => (
           <AddToBookList
             updateShelf={this.updateShelf}
+            myBooks={this.state.myBooks}
           />
         )}/>
       </div>

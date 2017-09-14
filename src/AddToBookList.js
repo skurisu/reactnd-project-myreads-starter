@@ -31,6 +31,9 @@ class AddToBookList extends Component {
   render() {
     let showingBooks;
     const {books} = this.state;
+    const { myBooks } = this.props;
+    console.log(books);
+    
     
     if(this.state.query) {
       const match = new RegExp(escapeRegExp(this.state.query),'i');
@@ -41,15 +44,27 @@ class AddToBookList extends Component {
 
     showingBooks.sort(sortBy('title'));
     
-    const Books = showingBooks.map((book) => 
-      <Book 
-        key={book.id}
-        id={book.id}
-        cover={book.imageLinks.thumbnail}
-        title={book.title}
-        authors={book.authors}
-        updateShelf={this.props.updateShelf}
-      />
+    const Books = showingBooks.map((book) => {
+
+      let myShelf;
+
+      myBooks.map((myBook) => {
+        if(book.id === myBook.id) {
+          myShelf = myBook.shelf
+        }
+      })
+
+
+      return <Book 
+          key={book.id}
+          id={book.id}
+          cover={book.imageLinks.thumbnail}
+          title={book.title}
+          authors={book.authors}
+          shelf={myShelf}
+          updateShelf={this.props.updateShelf}
+        />
+      }
     );
 
     return(

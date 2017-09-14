@@ -13,6 +13,7 @@ class BookWrapper extends Component {
       cover={book.imageLinks.thumbnail}
       title={book.title}
       authors={book.authors}
+      shelf={book.shelf}
       updateShelf={this.props.updateShelf}
     />);
   }
